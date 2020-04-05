@@ -1,20 +1,29 @@
 package edu.ait.winemanager.dto;
 
+import javax.persistence.*;
+
+@Entity
 public class Wine {
-    private int id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
     private String name;
     private int year;
     private String grapes;
     private String country;
     private String region;
+
+    @Lob
     private String description;
+
     private String picture;
 
 
     public Wine() {
     }
 
-    public Wine(int id, String name, int year, String grapes, String country, String region, String description, String picture) {
+    public Wine(Integer id, String name, int year, String grapes, String country, String region, String description, String picture) {
         this.id = id;
         this.name = name;
         this.year = year;
@@ -25,11 +34,11 @@ public class Wine {
         this.picture = picture;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

@@ -1,6 +1,7 @@
 package edu.ait.winemanager.dao;
 
 import edu.ait.winemanager.dto.Wine;
+import edu.ait.winemanager.exceptions.WineNotFoundException;
 import org.springframework.stereotype.Component;
 
 import javax.swing.text.html.Option;
@@ -21,21 +22,67 @@ public class WineDAO {
             new Wine(6, "CHATEAU LE DOYENNE", 2005, "Merlot", "France", "Bordeaux", "Though dense and chewy, this wine does not overpower with its finely balanced depth and structure. It is a truly luxurious experience for the\nsenses.", "le_doyenne.jpg"),
             new Wine(7, "DOMAINE DU BOUSCAT", 2009, "Merlot", "France", "Bordeaux", "The light golden color of this wine belies the bright flavor it holds. A true summer wine, it begs for a picnic lunch in a sun-soaked vineyard.", "bouscat.jpg"),
             new Wine(8, "BLOCK NINE", 2009, "Pinot Noir", "USA", "California", "With hints of ginger and spice, this wine makes an excellent complement to light appetizer and dessert fare for a holiday gathering.", "block_nine.jpg"),
-            new Wine(9,  "DOMAINE SERENE", 2007, "Pinot Noir", "USA", "Oregon","Though subtle in its complexities, this wine is sure to please a wide range of enthusiasts. Notes of pomegranate will delight as the nutty finish completes the picture of a fine sipping experience.", "domaine_serene.jpg"),
+            new Wine(9, "DOMAINE SERENE", 2007, "Pinot Noir", "USA", "Oregon", "Though subtle in its complexities, this wine is sure to please a wide range of enthusiasts. Notes of pomegranate will delight as the nutty finish completes the picture of a fine sipping experience.", "domaine_serene.jpg"),
             new Wine(10, "BODEGA LURTON", 2011, "Pinot Gris", "Argentina", "Mendoza", "Solid notes of black currant blended with a light citrus make this wine an easy pour for varied palates.", "bodega_lurton.jpg"),
             new Wine(11, "LES MORIZOTTES", 2009, "Chardonnay", "France", "Burgundy", "Breaking the mold of the classics, this offering will surprise and undoubtedly get tongues wagging with the hints of coffee and tobacco in\nperfect alignment with more traditional notes. Breaking the mold of the classics, this offering will surprise and\nundoubtedly get tongues wagging with the hints of coffee and tobacco in\nperfect alignment with more traditional notes. Sure to please the late-night crowd with the slight jolt of adrenaline it brings.", "morizottes.jpg")));
 
-    public List<Wine> findAll(){
+    //Find All Wines
+    public List<Wine> findAll() {
         return wineList;
     }
 
-    public Optional<Wine> findById(int id){
-        Wine foundWine = null;
-        if(id>=0 && id < wineList.size()){
-            foundWine = wineList.get(id);
-        }
-        return Optional.ofNullable(foundWine);
+    //Find Wine by Id throws Exception
+    public Optional<Wine> findById(int id) {
+        Wine foundWine = findWine(id);
+        if (foundWine != null)
+            return Optional.ofNullable(foundWine);
+        else
+            throw new WineNotFoundException("Unable to find wine with id " + id);
     }
 
+    //helper method
+    private Wine findWine(int wineId) {
+        Wine found = null;
+        for (Wine wine : wineList) {
+            if (wine.getId() == wineId) {
+                found = wine;
+                break;
+            }
+        }
+        return found;
+    }
 
+    // Delete Wine uses the Helper Class
+    public void deleteWine(int id) {
+        Wine found = findWine(id);
+        if (found != null) {
+            wineList.remove(found);
+        } else {
+            throw new WineNotFoundException("Unabel to find wine by id " + id);
+        }
+    }
+
+    //Create Wine
+    public void createWine(Wine newWine) {
+        wineList.add(newWine);
+    }
+
+    //Update / create Wine
+    public boolean updateWine(Wine wine){
+        boolean updated = true;
+        Wine foundWine = findWine(wine.getId());
+        if(foundWine != null){
+            //update exiting if found
+            int index = wineList.indexOf(foundWine);
+            System.out.println("index " + index);
+            wineList.remove(index);
+            wineList.add(index, wine);
+        }
+        else{
+            //otherwise add new
+            wineList.add(wine);
+            updated = false;
+        }
+        return updated;
+    }
 }
