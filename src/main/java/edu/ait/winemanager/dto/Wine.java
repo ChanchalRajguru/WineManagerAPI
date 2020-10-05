@@ -1,6 +1,7 @@
 package edu.ait.winemanager.dto;
 
 import javax.persistence.*;
+import java.sql.Blob;
 
 @Entity
 public class Wine {
@@ -14,7 +15,7 @@ public class Wine {
     private String country;
     private String region;
 
-    @Lob
+    @Column(name="description",columnDefinition="blob")
     private String description;
 
     private String picture;
